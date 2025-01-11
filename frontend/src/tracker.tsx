@@ -1,27 +1,38 @@
-import React, { useState } from "react";
+import React, { useState, FormEvent, ChangeEvent } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Loader2 } from "lucide-react";
 
-const SupplyChainTracker = () => {
-	const [loading, setLoading] = useState(false);
-	const [productId, setProductId] = useState("");
-	const [currentStep, setCurrentStep] = useState({
+interface DataField {
+	key: string;
+	value: string;
+}
+
+interface CurrentStep {
+	name: string;
+	description: string;
+	additionalData: DataField[];
+}
+
+const SupplyChainTracker: React.FC = () => {
+	const [loading, setLoading] = useState<boolean>(false);
+	const [productId, setProductId] = useState<string>("");
+	const [currentStep, setCurrentStep] = useState<CurrentStep>({
 		name: "",
 		description: "",
 		additionalData: [{ key: "", value: "" }],
 	});
 
-	const addDataField = () => {
+	const addDataField = (): void => {
 		setCurrentStep((prev) => ({
 			...prev,
 			additionalData: [...prev.additionalData, { key: "", value: "" }],
 		}));
 	};
 
-	const handleSubmit = async (e) => {
+	const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
 		e.preventDefault();
 		setLoading(true);
 		try {
@@ -33,6 +44,16 @@ const SupplyChainTracker = () => {
 		} finally {
 			setLoading(false);
 		}
+	};
+
+	const handleInputChange = (field: keyof CurrentStep, value: string): void => {
+		setCurrentStep((prev) => ({ ...prev, [field]: value }));
+	};
+
+	const handleDataFieldChange = (index: number, field: keyof DataField, value: string): void => {
+		const newData = [...currentStep.additionalData];
+		newData[index][field] = value;
+		setCurrentStep((prev) => ({ ...prev, additionalData: newData }));
 	};
 
 	return (
@@ -47,7 +68,7 @@ const SupplyChainTracker = () => {
 						<Input
 							type="text"
 							value={productId}
-							onChange={(e) => setProductId(e.target.value)}
+							onChange={(e: ChangeEvent<HTMLInputElement>) => setProductId(e.target.value)}
 							placeholder="Enter product ID"
 							className="w-full"
 						/>
@@ -58,7 +79,7 @@ const SupplyChainTracker = () => {
 						<Input
 							type="text"
 							value={currentStep.name}
-							onChange={(e) => setCurrentStep((prev) => ({ ...prev, name: e.target.value }))}
+							onChange={(e: ChangeEvent<HTMLInputElement>) => handleInputChange("name", e.target.value)}
 							placeholder="Enter step name"
 							className="w-full"
 						/>
@@ -69,7 +90,7 @@ const SupplyChainTracker = () => {
 						<Input
 							type="text"
 							value={currentStep.description}
-							onChange={(e) => setCurrentStep((prev) => ({ ...prev, description: e.target.value }))}
+							onChange={(e: ChangeEvent<HTMLInputElement>) => handleInputChange("description", e.target.value)}
 							placeholder="Enter step description"
 							className="w-full"
 						/>
@@ -88,21 +109,13 @@ const SupplyChainTracker = () => {
 								<Input
 									placeholder="Key"
 									value={field.key}
-									onChange={(e) => {
-										const newData = [...currentStep.additionalData];
-										newData[index].key = e.target.value;
-										setCurrentStep((prev) => ({ ...prev, additionalData: newData }));
-									}}
+									onChange={(e: ChangeEvent<HTMLInputElement>) => handleDataFieldChange(index, "key", e.target.value)}
 									className="w-1/2"
 								/>
 								<Input
 									placeholder="Value"
 									value={field.value}
-									onChange={(e) => {
-										const newData = [...currentStep.additionalData];
-										newData[index].value = e.target.value;
-										setCurrentStep((prev) => ({ ...prev, additionalData: newData }));
-									}}
+									onChange={(e: ChangeEvent<HTMLInputElement>) => handleDataFieldChange(index, "value", e.target.value)}
 									className="w-1/2"
 								/>
 							</div>
