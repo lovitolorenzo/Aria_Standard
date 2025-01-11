@@ -23,7 +23,7 @@
 		}
 	},
 	"forwardPorts": [3000, 8545],
-	"postCreateCommand": "npm install",
+	"postCreateCommand": "sudo chown -R node:node /app && npm install",
 	"postStartCommand": "cd frontend && npm install",
 	"features": {
 		"ghcr.io/devcontainers/features/node:1": {
@@ -32,5 +32,6 @@
 		"ghcr.io/devcontainers/features/git:1": {},
 		"ghcr.io/devcontainers/features/github-cli:1": {}
 	},
-	"remoteUser": "node"
+	"remoteUser": "node",
+	"mounts": ["source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/node/.ssh,type=bind,consistency=cached"]
 }
