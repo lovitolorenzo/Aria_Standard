@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
 import Home from "./components/Home";
-import SupplyChainTracker from "./pages/Tracker";
+import SupplyChainTracker from "./pages/SupplyChainTracker";
 import "./App.css";
 
 function App() {
