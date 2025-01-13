@@ -1,14 +1,14 @@
-import { ethers, ContractTransaction, BigNumberish } from "ethers";
+import { ethers, ContractTransactionResponse } from "ethers";
 
 export type StandardTrackerContract = ethers.Contract & {
-	completeStep: (
-		batchId: BigNumberish,
+	completeStep(
+		batchId: number,
 		stepName: string,
 		dataKeys: string[],
 		dataValues: string[],
-	) => Promise<ContractTransaction>;
+	): Promise<ContractTransactionResponse>;
 
-	batches: (batchId: BigNumberish) => Promise<
+	batches(batchId: number): Promise<
 		[
 			string, // productName
 			bigint, // batchId
@@ -19,7 +19,7 @@ export type StandardTrackerContract = ethers.Contract & {
 		]
 	>;
 
-	createBatch: (productName: string, quantity: BigNumberish, steps: string[]) => Promise<ContractTransaction>;
+	createBatch(productName: string, quantity: number, steps: string[]): Promise<ContractTransactionResponse>;
 };
 
 export interface BatchDetails {
