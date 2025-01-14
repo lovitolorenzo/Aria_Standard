@@ -53,7 +53,11 @@ export class BlockchainService {
 	}
 
 	async getBatchDetails(batchId: number): Promise<BatchDetails> {
-		console.log("batchId", batchId);
+		console.log("Fetching batchId:", batchId, typeof batchId);
+
+		// First check if we can get any data
+		const rawResult = await this.contract.batches(batchId);
+		console.log("Raw contract response:", rawResult);
 		try {
 			const [productName, batchId_, quantity, currentStep, requiredSteps, completed] = await this.contract.batches(
 				batchId,

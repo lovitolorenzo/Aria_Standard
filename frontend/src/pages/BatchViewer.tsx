@@ -15,6 +15,7 @@ const BatchViewer = () => {
 	const handleViewBatch = async () => {
 		try {
 			setError("");
+
 			const details = await blockchainService.getBatchDetails(parseInt(batchId));
 			setBatchDetails(details);
 		} catch (error) {

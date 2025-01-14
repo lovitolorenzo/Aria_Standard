@@ -1,9 +1,10 @@
-import React, { useState, FormEvent, ChangeEvent } from "react";
+import React, { useState, useEffect, FormEvent, ChangeEvent } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Loader2 } from "lucide-react";
+import { BlockchainService } from "../services/BlockchainService";
 
 interface DataField {
 	key: string;
@@ -19,11 +20,25 @@ interface CurrentStep {
 const SupplyChainTracker: React.FC = () => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [productId, setProductId] = useState<string>("");
+	const [blockchainService, setBlockchainService] = useState<BlockchainService | null>(null);
 	const [currentStep, setCurrentStep] = useState<CurrentStep>({
 		name: "",
 		description: "",
 		additionalData: [{ key: "", value: "" }],
 	});
+
+	useEffect(() => {
+		const initBlockchain = async () => {
+			try {
+				const service = new BlockchainService();
+				await service.connectWallet();
+				setBlockchainService(service);
+			} catch (error) {
+				console.error("Error initializing blockchain:", error);
+			}
+		};
+		initBlockchain();
+	}, []);
 
 	const addDataField = (): void => {
 		setCurrentStep((prev) => ({
@@ -34,13 +49,25 @@ const SupplyChainTracker: React.FC = () => {
 
 	const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
 		e.preventDefault();
+		if (!blockchainService) {
+			console.error("Blockchain service not initialized");
+			return;
+		}
 		setLoading(true);
 		try {
-			// Here you would interact with your blockchain contract
-			// Example: await contract.addProductionStep(...)
-			await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulated delay
+			// Create a new batch
+			const tx = await blockchainService.createBatch(
+				productId,
+				1, // quantity
+				[currentStep.name], // steps array
+			);
+			console.log("Transaction:", tx);
+
+			// Wait for confirmation
+			const receipt = await tx.wait();
+			console.log("Receipt:", receipt);
 		} catch (error) {
-			console.error("Error:", error);
+			console.error("Error creating batch:", error);
 		} finally {
 			setLoading(false);
 		}
@@ -122,7 +149,7 @@ const SupplyChainTracker: React.FC = () => {
 						))}
 					</div>
 
-					<Button type="submit" className="w-full" disabled={loading}>
+					<Button type="submit" className="w-full" disabled={loading || !blockchainService}>
 						{loading ? (
 							<>
 								<Loader2 className="mr-2 h-4 w-4 animate-spin" />
