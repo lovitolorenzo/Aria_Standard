@@ -1,6 +1,13 @@
 import { ethers, ContractTransactionResponse } from "ethers";
 
 export type StandardTrackerContract = ethers.Contract & {
+	createBatch(
+		batchId: number,
+		productName: string,
+		quantity: number,
+		steps: string[],
+	): Promise<ContractTransactionResponse>;
+
 	completeStep(
 		batchId: number,
 		stepName: string,
@@ -8,20 +15,20 @@ export type StandardTrackerContract = ethers.Contract & {
 		dataValues: string[],
 	): Promise<ContractTransactionResponse>;
 
-	batches(batchId: number): Promise<
+	// Replace 'batches' with our new function
+	getBatchDetails(batchId: number): Promise<
 		[
 			string, // productName
-			bigint, // batchId
+			bigint, // batchIdOut
 			bigint, // quantity
 			bigint, // currentStep
 			string[], // requiredSteps
 			boolean, // completed
 		]
 	>;
-
-	createBatch(productName: string, quantity: number, steps: string[]): Promise<ContractTransactionResponse>;
 };
 
+// standardtracker.ts
 export interface BatchDetails {
 	productName: string;
 	batchId: bigint;

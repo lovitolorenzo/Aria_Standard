@@ -1,11 +1,11 @@
 import { ethers, BrowserProvider, Contract, ContractTransactionResponse } from "ethers";
 import type { StandardTrackerContract, BatchDetails } from "../types/StandardTracker";
 
-const CONTRACT_ADDRESS = "0x6f1871fEe50340c611C707Af99d2002D91081f05"; // Your deployed contract address
+const CONTRACT_ADDRESS = "0x80B7D24885c6c3C659b8ab4D18E5F30142C976C2"; // Your deployed contract address
 const CONTRACT_ABI = [
-	"function createBatch(string memory productName, uint256 quantity, string[] memory steps) external returns (uint256)",
+	"function createBatch(uint256 batchId, string memory productName, uint256 quantity, string[] memory steps) external returns (uint256)",
 	"function completeStep(uint256 batchId, string calldata stepName, string[] calldata dataKeys, string[] calldata dataValues) external",
-	"function batches(uint256) external view returns (string memory productName, uint256 batchId, uint256 quantity, uint256 currentStep, string[] memory requiredSteps, bool completed)",
+	"function getBatchDetails(uint256 batchId) external view returns (string productName, uint256 batchIdOut, uint256 quantity, uint256 currentStep, string[] requiredSteps, bool completed)",
 ];
 
 export class BlockchainService {
@@ -53,33 +53,46 @@ export class BlockchainService {
 	}
 
 	async getBatchDetails(batchId: number): Promise<BatchDetails> {
-		console.log("Fetching batchId:", batchId, typeof batchId);
-
-		// First check if we can get any data
-		const rawResult = await this.contract.batches(batchId);
-		console.log("Raw contract response:", rawResult);
 		try {
-			const [productName, batchId_, quantity, currentStep, requiredSteps, completed] = await this.contract.batches(
-				batchId,
-			);
+			console.log("Fetching batchId:", batchId);
+
+			// Call the new Solidity function
+			const [productName, batchIdOut, quantity, currentStep, requiredSteps, completed] =
+				await this.contract.getBatchDetails(batchId);
+
+			// Return the data in an object
+			console.log("Batch Details:", {
+				productName,
+				batchId: batchIdOut,
+				quantity,
+				currentStep,
+				requiredSteps,
+				completed,
+			});
 
 			return {
 				productName,
-				batchId: batchId_,
+				batchId: batchIdOut,
 				quantity,
 				currentStep,
 				requiredSteps,
 				completed,
 			};
 		} catch (error) {
-			console.error("Error fetching batch details:", error);
+			console.error("Error fetching batch details:", { error, batchId, contractAddress: this.contract.target });
 			throw error;
 		}
 	}
 
-	async createBatch(productName: string, quantity: number, steps: string[]): Promise<ContractTransactionResponse> {
+	async createBatch(
+		batchId: number,
+		productName: string,
+		quantity: number,
+		steps: string[],
+	): Promise<ContractTransactionResponse> {
 		try {
-			return await this.contract.createBatch(productName, quantity, steps);
+			console.log("Creating batch:", { batchId, productName, quantity, steps });
+			return await this.contract.createBatch(batchId, productName, quantity, steps);
 		} catch (error) {
 			console.error("Error creating batch:", error);
 			throw error;

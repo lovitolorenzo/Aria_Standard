@@ -37,15 +37,13 @@ contract StandardTracker is AccessControl, Pausable {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
 
-    function createBatch(string memory productName, uint256 quantity, string[] memory steps)
+    function createBatch(uint256 batchId, string memory productName, uint256 quantity, string[] memory steps)
         external
-        onlyRole(DEFAULT_ADMIN_ROLE)
         returns (uint256)
     {
         require(quantity > 0, "Quantity must be positive");
         require(steps.length > 0, "Must have steps");
 
-        uint256 batchId = nextBatchId++;
         BatchProduct storage batch = batches[batchId];
         batch.productName = productName;
         batch.batchId = batchId;
@@ -88,4 +86,28 @@ contract StandardTracker is AccessControl, Pausable {
             emit BatchCompleted(batchId);
         }
     }
+
+    function getBatchDetails(uint256 batchId)
+    external
+    view
+    returns (
+        string memory productName,
+        uint256 batchIdOut,
+        uint256 quantity,
+        uint256 currentStep,
+        string[] memory requiredSteps,
+        bool completed
+    )
+    {
+        BatchProduct storage batch = batches[batchId];
+        return (
+            batch.productName,
+            batch.batchId,
+            batch.quantity,
+            batch.currentStep,
+            batch.requiredSteps,
+            batch.completed
+        );
+    }
+
 }
