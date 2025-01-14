@@ -49,6 +49,7 @@ const SupplyChainTracker: React.FC = () => {
 		initBlockchain();
 	}, []);
 
+	// Check if the entered productId is already used
 	const handleProductIdBlur = async () => {
 		if (!blockchainService) return;
 
@@ -75,6 +76,7 @@ const SupplyChainTracker: React.FC = () => {
 		}
 	};
 
+	// Resets the entire form
 	const resetForm = () => {
 		setProductId("");
 		setProductName("");
@@ -85,6 +87,7 @@ const SupplyChainTracker: React.FC = () => {
 		});
 	};
 
+	// Add additional data field
 	const addDataField = (): void => {
 		setCurrentStep((prev) => ({
 			...prev,
@@ -92,11 +95,18 @@ const SupplyChainTracker: React.FC = () => {
 		}));
 	};
 
+	// Submit handler
 	const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
 		e.preventDefault();
 		if (!blockchainService) {
 			console.error("Blockchain service not initialized");
 			setTxnStatus("Error: Blockchain service not initialized!");
+			return;
+		}
+
+		// If we already have an error that the ID is taken, block the submission
+		if (idError === "This Product ID already exists in the contract!") {
+			setTxnStatus("❌ Cannot create batch. Product ID is already used.");
 			return;
 		}
 
@@ -138,10 +148,12 @@ const SupplyChainTracker: React.FC = () => {
 		}
 	};
 
+	// Handle changes in currentStep fields
 	const handleInputChange = (field: keyof CurrentStep, value: string): void => {
 		setCurrentStep((prev) => ({ ...prev, [field]: value }));
 	};
 
+	// Handle changes in each additional data field
 	const handleDataFieldChange = (index: number, field: keyof DataField, value: string): void => {
 		const newData = [...currentStep.additionalData];
 		newData[index][field] = value;
