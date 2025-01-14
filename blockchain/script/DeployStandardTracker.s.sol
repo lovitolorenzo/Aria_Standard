@@ -6,13 +6,13 @@ import "../src/SupplyChainTracker.sol";
 
 contract DeployStandardTracker is Script {
     function run() external {
-        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
-        vm.startBroadcast(deployerPrivateKey);
+        // Remove private key handling since we'll use cast wallet
+        vm.startBroadcast();  // No private key parameter needed
 
         StandardTracker tracker = new StandardTracker();
-
-        // Grant OPERATOR_ROLE to the deployer
-        tracker.grantRole(tracker.OPERATOR_ROLE(), vm.addr(deployerPrivateKey));
+        
+        // Use msg.sender instead of deriving from private key
+        tracker.grantRole(tracker.OPERATOR_ROLE(), msg.sender);
 
         vm.stopBroadcast();
     }

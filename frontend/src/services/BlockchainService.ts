@@ -1,7 +1,7 @@
 import { ethers, BrowserProvider, Contract, ContractTransactionResponse } from "ethers";
 import type { StandardTrackerContract, BatchDetails } from "../types/StandardTracker";
 
-const CONTRACT_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3"; // Your deployed contract address
+const CONTRACT_ADDRESS = "0x6f1871fEe50340c611C707Af99d2002D91081f05"; // Your deployed contract address
 const CONTRACT_ABI = [
 	"function createBatch(string memory productName, uint256 quantity, string[] memory steps) external returns (uint256)",
 	"function completeStep(uint256 batchId, string calldata stepName, string[] calldata dataKeys, string[] calldata dataValues) external",
