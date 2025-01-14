@@ -11,9 +11,11 @@ const Home: React.FC = () => {
 			</CardHeader>
 			<CardContent className="space-y-4">
 				<p className="text-gray-600">Track and manage your supply chain with blockchain technology.</p>
-				<Link to="/tracker">
-					<Button>Go to Supply Chain Tracker</Button>
-				</Link>
+				<div className="mt-6">
+					<Link to="/tracker">
+						<Button>Go to Supply Chain Tracker</Button>
+					</Link>
+				</div>
 			</CardContent>
 		</Card>
 	);
