@@ -1,6 +1,6 @@
 import React from "react";
-import Tracker from "../components/Tracker";
-import BatchViewer from "../components/BatchViewer";
+import Tracker from "./Tracker";
+import BatchViewer from "./BatchViewer";
 
 const SupplyChainTracker = () => {
 	return (

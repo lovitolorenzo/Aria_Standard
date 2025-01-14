@@ -53,6 +53,7 @@ export class BlockchainService {
 	}
 
 	async getBatchDetails(batchId: number): Promise<BatchDetails> {
+		console.log("batchId", batchId);
 		try {
 			const [productName, batchId_, quantity, currentStep, requiredSteps, completed] = await this.contract.batches(
 				batchId,

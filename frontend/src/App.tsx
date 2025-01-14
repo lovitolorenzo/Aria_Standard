@@ -1,7 +1,9 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
 import Home from "./components/Home";
-import SupplyChainTracker from "./pages/SupplyChainTracker";
+import Tracker from "./pages/Tracker";
+import BatchViewer from "./pages/BatchViewer";
+
 import "./App.css";
 
 function App() {
@@ -10,7 +12,8 @@ function App() {
 			<Routes>
 				<Route path="/" element={<Layout />}>
 					<Route index element={<Home />} />
-					<Route path="tracker" element={<SupplyChainTracker />} />
+					<Route path="tracker" element={<Tracker />} />
+					<Route path="batch-viewer" element={<BatchViewer />} />
 				</Route>
 			</Routes>
 		</BrowserRouter>
