@@ -40,6 +40,15 @@ const SupplyChainTracker: React.FC = () => {
 		initBlockchain();
 	}, []);
 
+	const resetForm = () => {
+		setProductId("");
+		setCurrentStep({
+			name: "",
+			description: "",
+			additionalData: [{ key: "", value: "" }],
+		});
+	};
+
 	const addDataField = (): void => {
 		setCurrentStep((prev) => ({
 			...prev,
@@ -66,6 +75,9 @@ const SupplyChainTracker: React.FC = () => {
 			// Wait for confirmation
 			const receipt = await tx.wait();
 			console.log("Receipt:", receipt);
+
+			// Reset form after successful submission
+			resetForm();
 		} catch (error) {
 			console.error("Error creating batch:", error);
 		} finally {
